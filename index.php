@@ -2,12 +2,9 @@
 if (isset($_GET["park_filter"]) && !empty(($_GET["park_filter"]))) {
     $park_filter = true;
 
-    echo "vero";
-    echo "<br>";
 } else {
     $park_filter = false;
-    echo "falso";
-    echo "<br>";
+    
 }
 
 if (isset($_GET["vote"])) {
@@ -19,7 +16,6 @@ if (isset($_GET["vote"])) {
             $vote = $_GET["vote"];
             break;
     }
-    echo "Il voto: " . $vote;
 }
 $hotels = [
     [
@@ -89,48 +85,49 @@ $hotels = [
         <h4>Filtrato per parcheggio:</h4>
     </div>
 
-    <?php
-    $filter_hotel = [];
-    foreach ($hotels as $index => $cur_hotel) {
-        if ($park_filter || isset($vote)) {
-            switch ($_GET['park_filter']) {
-                case "true":
-                    if ($cur_hotel['parking'] == true && $cur_hotel['vote'] >= $vote) {
-                        $filter_hotel[] = $cur_hotel;
-                    }
-                    break;
-                case "false":
-                    if ($cur_hotel['parking'] == false && $cur_hotel['vote'] >= $vote) {
-                        $filter_hotel[] = $cur_hotel;
-                        echo $vote;
-                    }
-                    break;
+    <div class="pb-3">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col" colspan="3">Name</th>
+                    <th scope="col" colspan="3">Description</th>
+                    <th scope="col">Parking</th>
+                    <th scope="col">Rating</th>
+                    <th scope="col">Center Distance</th>
+                </tr>
+            </thead>
 
-                default:
-                    if ($cur_hotel['vote'] >=  $vote) {
-                        $filter_hotel[] = $cur_hotel;
+            <?php
+            $filter_hotel = [];
+            foreach ($hotels as $index => $cur_hotel) {
+                if ($park_filter || isset($vote)) {
+                    switch ($_GET['park_filter']) {
+                        case "true":
+                            if ($cur_hotel['parking'] == true && $cur_hotel['vote'] >= $vote) {
+                                $filter_hotel[] = $cur_hotel;
+                            }
+                            break;
+                        case "false":
+                            if ($cur_hotel['parking'] == false && $cur_hotel['vote'] >= $vote) {
+                                $filter_hotel[] = $cur_hotel;
+                                echo $vote;
+                            }
+                            break;
+
+                        default:
+                            if ($cur_hotel['vote'] >=  $vote) {
+                                $filter_hotel[] = $cur_hotel;
+                            }
+                            break;
                     }
-                    break;
+                } else {
+                    $filter_hotel[] = $cur_hotel;
+                }
             }
-        } else {
-            $filter_hotel[] = $cur_hotel;
-        }
-    }
-    $i = 0;
-    foreach ($filter_hotel as $index => $cur_hotel) {
-    ?>
-        <div class="pb-3">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col" colspan="3">Name</th>
-                        <th scope="col" colspan="3">Description</th>
-                        <th scope="col">Parking</th>
-                        <th scope="col">Rating</th>
-                        <th scope="col">Center Distance</th>
-                    </tr>
-                </thead>
+            $i = 0;
+            foreach ($filter_hotel as $index => $cur_hotel) {
+            ?>
                 <tbody>
                     <tr>
                         <th scope="row"><?php echo ++$i; ?></th>
@@ -141,10 +138,11 @@ $hotels = [
                         <td><?php echo $cur_hotel["distance_to_center"]; ?></td>
                     </tr>
                 </tbody>
-            </table>
-        </div>
-    <?php } ?>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+                <?php } ?>
+        </table>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 
 </html>
