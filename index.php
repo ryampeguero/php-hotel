@@ -1,16 +1,25 @@
 <?php
-if(isset($_GET["park_filter"])){
-    $park_filter = $_GET["park_filter"];
-    switch($park_filter){
-        case "true":
-            $park_filter = true;
+if (isset($_GET["park_filter"]) && !empty(($_GET["park_filter"]))) {
+    $park_filter = true;
+
+    echo "vero";
+    echo "<br>";
+} else {
+    $park_filter = false;
+    echo "falso";
+    echo "<br>";
+}
+
+if (isset($_GET["vote"])) {
+    switch ($_GET["vote"]) {
+        case "":
+            $vote = 0;
             break;
-        case "false":
-            $park_filter = false;
+        default:
+            $vote = $_GET["vote"];
             break;
     }
-    
-    echo $park_filter;
+    echo "Il voto: " . $vote;
 }
 $hotels = [
     [
@@ -66,13 +75,49 @@ $hotels = [
 <body>
     <form action="index.php" method="GET">
         <select name="park_filter" id="">
+            <option data-hidden="true" value="">Seleziona</option>
             <option value="true">Si</option>
             <option value="false">No</option>
         </select>
+        <label for="vote">Filtra per voto</label>
+        <input type="number" name="vote" id="vote">
         <button class="btn btn-primary submit">Filtra</button>
     </form>
+
+
+    <div>
+        <h4>Filtrato per parcheggio:</h4>
+    </div>
+
     <?php
+    $filter_hotel = [];
     foreach ($hotels as $index => $cur_hotel) {
+        if ($park_filter || isset($vote)) {
+            switch ($_GET['park_filter']) {
+                case "true":
+                    if ($cur_hotel['parking'] == true && $cur_hotel['vote'] >= $vote) {
+                        $filter_hotel[] = $cur_hotel;
+                    }
+                    break;
+                case "false":
+                    if ($cur_hotel['parking'] == false && $cur_hotel['vote'] >= $vote) {
+                        $filter_hotel[] = $cur_hotel;
+                        echo $vote;
+                    }
+                    break;
+
+                default:
+                    if ($cur_hotel['vote'] >=  $vote) {
+                        $filter_hotel[] = $cur_hotel;
+                    }
+                    break;
+            }
+        } else {
+            $filter_hotel[] = $cur_hotel;
+        }
+    }
+    $i = 0;
+    foreach ($filter_hotel as $index => $cur_hotel) {
     ?>
         <div class="pb-3">
             <table class="table">
@@ -88,7 +133,7 @@ $hotels = [
                 </thead>
                 <tbody>
                     <tr>
-                        <th scope="row">1</th>
+                        <th scope="row"><?php echo ++$i; ?></th>
                         <td colspan="3"><?php echo $cur_hotel["name"]; ?></td>
                         <td colspan="3"><?php echo $cur_hotel["description"]; ?></td>
                         <td><?php echo $cur_hotel["parking"] ? 'Si' : 'No'; ?></td>
